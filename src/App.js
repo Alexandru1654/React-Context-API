@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PostProvider } from './PostContext';
-import PostsPage from './PostsPage'; 
 
 function App() {
-  return (
-    <PostProvider> {}
-      <div>
-        <PostsPage /> {}
-      </div>
-    </PostProvider>
-  );
-}
-
   const [articles, setArticles] = useState([]);
+  const [formData, setFormData] = useState({
+    title: '',
+    image: '',
+    content: '',
+    category: '',
+    tags: [],
+    isPublished: false,
+  });
 
   const categories = ['Tecnologia', 'Sport', 'Salute', 'Moda', 'Cucina'];
   const availableTags = ['React', 'JavaScript', 'CSS', 'HTML', 'Node.js'];
@@ -84,105 +82,107 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Blog Form</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">Titolo dell'articolo:</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </div>
+    <PostProvider>
+      <div>
+        <h1>Blog Form</h1>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="title">Titolo dell'articolo:</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="image">URL Immagine:</label>
-          <input
-            type="text"
-            id="image"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-          />
-        </div>
+          <div>
+            <label htmlFor="image">URL Immagine:</label>
+            <input
+              type="text"
+              id="image"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="content">Contenuto dell'articolo:</label>
-          <textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-          />
-        </div>
+          <div>
+            <label htmlFor="content">Contenuto dell'articolo:</label>
+            <textarea
+              id="content"
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="category">Categoria:</label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-          >
-            <option value="">Seleziona una categoria</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
+          <div>
+            <label htmlFor="category">Categoria:</label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
+              <option value="">Seleziona una categoria</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label>Tags:</label>
+            {availableTags.map((tag) => (
+              <div key={tag}>
+                <input
+                  type="checkbox"
+                  id={tag}
+                  name="tags"
+                  value={tag}
+                  checked={formData.tags.includes(tag)}
+                  onChange={handleChange}
+                />
+                <label htmlFor={tag}>{tag}</label>
+              </div>
             ))}
-          </select>
-        </div>
+          </div>
 
-        <div>
-          <label>Tags:</label>
-          {availableTags.map((tag) => (
-            <div key={tag}>
-              <input
-                type="checkbox"
-                id={tag}
-                name="tags"
-                value={tag}
-                checked={formData.tags.includes(tag)}
-                onChange={handleChange}
-              />
-              <label htmlFor={tag}>{tag}</label>
-            </div>
+          <div>
+            <label htmlFor="isPublished">Pubblica l'articolo:</label>
+            <input
+              type="checkbox"
+              id="isPublished"
+              name="isPublished"
+              checked={formData.isPublished}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button type="submit">Aggiungi Articolo</button>
+        </form>
+
+        <h2>Articoli Inseriti:</h2>
+        <ul>
+          {articles.map((article, index) => (
+            <li key={index}>
+              <h3>{article.title}</h3>
+              {article.image && <img src={article.image} alt="Immagine" width="200" />}
+              <p>{article.content}</p>
+              <p><strong>Categoria:</strong> {article.category}</p>
+              <p><strong>Tags:</strong> {Array.isArray(article.tags) ? article.tags.join(', ') : 'Nessun tag'}</p>
+              <p><strong>Pubblicato:</strong> {article.isPublished ? 'Sì' : 'No'}</p>
+              <button onClick={() => handleDelete(index)}>🗑️</button>
+            </li>
           ))}
-        </div>
-
-        <div>
-          <label htmlFor="isPublished">Pubblica l'articolo:</label>
-          <input
-            type="checkbox"
-            id="isPublished"
-            name="isPublished"
-            checked={formData.isPublished}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button type="submit">Aggiungi Articolo</button>
-      </form>
-
-      <h2>Articoli Inseriti:</h2>
-      <ul>
-        {articles.map((article, index) => (
-          <li key={index}>
-            <h3>{article.title}</h3>
-            {article.image && <img src={article.image} alt="Immagine" width="200" />}
-            <p>{article.content}</p>
-            <p><strong>Categoria:</strong> {article.category}</p>
-            <p><strong>Tags:</strong> {Array.isArray(article.tags) ? article.tags.join(', ') : 'Nessun tag'}</p>
-            <p><strong>Pubblicato:</strong> {article.isPublished ? 'Sì' : 'No'}</p>
-            <button onClick={() => handleDelete(index)}>🗑️</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+        </ul>
+      </div>
+    </PostProvider>
   );
-
+}
 
 export default App;
