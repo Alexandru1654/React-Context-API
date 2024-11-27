@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { PostProvider } from './PostContext';
+import PostsPage from './PostsPage'; 
 
 function App() {
-  const [formData, setFormData] = useState({
-    title: '',
-    image: '',
-    content: '',
-    category: '',
-    tags: [],
-    isPublished: false,
-  });
+  return (
+    <PostProvider> {}
+      <div>
+        <PostsPage /> {}
+      </div>
+    </PostProvider>
+  );
+}
 
   const [articles, setArticles] = useState([]);
 
@@ -181,6 +183,6 @@ function App() {
       </ul>
     </div>
   );
-}
+
 
 export default App;
